@@ -51,8 +51,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :phoeneat, Phoeneat.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "app",
+  password: "passwd8808",
   database: "phoeneat_dev",
   hostname: "localhost",
   pool_size: 10

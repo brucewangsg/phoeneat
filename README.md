@@ -18,3 +18,9 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
   * Docs: https://hexdocs.pm/phoenix
   * Mailing list: http://groups.google.com/group/phoenix-talk
   * Source: https://github.com/phoenixframework/phoenix
+
+## Objective
+
+  * Create an URL shortener service that takes in any URL (with http or https scheme) and shortens the URL.
+  * Service is able to redirect visitor to the URL corresponding to the shortened URL.
+
