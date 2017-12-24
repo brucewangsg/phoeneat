@@ -1,36 +1,68 @@
-<div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
+<div id="app" class="jumbotron">
 </div>
 
-<div class="row marketing">
-  <div class="col-lg-6">
-    <h4>Resources</h4>
-    <ul>
-      <li>
-        <a href="http://phoenixframework.org/docs/overview">Guides</a>
-      </li>
-      <li>
-        <a href="https://hexdocs.pm/phoenix">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-    </ul>
-  </div>
+<script type="text/javascript">
+$(document).ready(function () {
+  formApp = new Vue({
+    el : '#app',
+    template : "\
+    <div class='jumbotron'>\
+      <h2>Shorten your URL</h2>\
+      <form action='shorten' v-on:submit.stop.prevent='onSubmitted'>\
+        <input v-model='url' class='cc-field' ref='field' v-on:blur='fieldBlurred' v-on:keyup='keyup' v-on:focus='fieldFocused' type='text' style='width : 100%; line-height : 32px; font-size : 28px;' placeholder='https://'/>\
+        <input v-bind:disabled='(url+\"\").indexOf(\"://\")<0' type='submit' value='Submit'/>\
+      </form>\
+    </div>",
+    data : {
+      url : ""
+    },
+    watch : {
+      url : function (oldValue, newValue) {
 
-  <div class="col-lg-6">
-    <h4>Help</h4>
-    <ul>
-      <li>
-        <a href="http://groups.google.com/group/phoenix-talk">Mailing list</a>
-      </li>
-      <li>
-        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">@elixirphoenix</a>
-      </li>
-    </ul>
-  </div>
-</div>
+      }
+    },
+    mounted : function () {
+      this.$refs.field = $(this.$el).find('.cc-field')[0];
+    },
+    methods : {
+      fieldBlurred : function () {
+        if (this.url == "") {
+          this.url = "http://"
+        }
+      },
+      fieldFocused : function () {
+        this.$refs.field.selectionStart = 0;
+        this.$refs.field.selectionEnd = this.url.length;
+      },
+      keyup : function () {
+        if (((this.url+'').length <= 4 && ("http").indexOf(this.url+'') < 0) || 
+            ((this.url+'').length > 4 && (this.url+'').indexOf('http') < 0)) {
+          var selectionStart = this.$refs.field.selectionStart;
+          var selectionEnd = this.$refs.field.selectionEnd;
+
+          var oThis = this;
+          Vue.nextTick(function () {
+            oThis.url = 'https://' + oThis.url;
+
+            var cursorAdjustment = ('https://').length;
+            selectionStart += cursorAdjustment;
+            selectionEnd += cursorAdjustment;
+
+            oThis.$refs.field.selectionStart = selectionStart;
+            oThis.$refs.field.selectionEnd = selectionEnd;
+          });
+        }
+      },
+
+      // handle URL submission
+      //
+      onSubmitted : function () {
+        $.post("/check_url", { url : this.url }, function () {
+          
+        });
+      }
+    }
+  });
+
+});
+</script>
