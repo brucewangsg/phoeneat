@@ -77,7 +77,7 @@ $(document).ready(function () {
           oThis.shortened_url = "";
 
           if ("shortcode" in info) {
-            oThis.shortened_url = info.shortcode;
+            oThis.shortened_url = oThis.noHTTPSonLocal(info.shortcode);
           } else if ("error" in info) {
             oThis.error = info.error;
           }
@@ -93,10 +93,19 @@ $(document).ready(function () {
           // URL remained the same
           if (oThis.url+"" == oThis.lookupURL+"") {
             if ("shortcode" in info) {
-              oThis.shortened_url = info.shortcode;
+              oThis.shortened_url = oThis.noHTTPSonLocal(info.shortcode);
             }
           }
         });
+      },
+
+      // if local, don't serve HTTPS link 
+      //
+      noHTTPSonLocal : function (url) {
+        if ((window.location + "").indexOf("localhost")) {
+          return url.replace("https://", "http://");
+        }
+        return url;
       }
     }
   });

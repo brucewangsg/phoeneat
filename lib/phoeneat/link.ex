@@ -28,12 +28,10 @@ defmodule Phoeneat.Link do
     records = Repo.all(query)
 
     if length(records) == 0 do
-      Integer.to_string(1679616, 36)
-    end 
-    
-    if length(records) == 1 do
+      Integer.to_string(1679616, 36) |> String.downcase()
+    else
       record = Enum.at(records, 0)
-      String.to_integer(record.shortcode, 36) + 1 |> Integer.to_string(36)
+      String.to_integer(record.shortcode, 36) + 1 |> Integer.to_string(36) |> String.downcase()
     end
   end
 
