@@ -10,7 +10,7 @@ $(document).ready(function () {
       <h2>Shorten your URL</h2>\
       <form action='shorten' v-on:submit.stop.prevent='onSubmitted'>\
         <input v-model='url' class='cc-field' ref='field' v-on:blur='fieldBlurred' v-on:keyup='keyup' v-on:focus='fieldFocused' type='text' style='width : 100%; line-height : 32px; font-size : 28px; margin-bottom : 10px;' placeholder='https://'/>\
-        <input v-bind:disabled='(url+\"\").indexOf(\"://\")<0' type='submit' value='Shorten URL'/>\
+        <input v-if='urlValid' type='submit' value='Shorten URL'/>\
       </form>\
       <div v-if='shortened_url'>Shortened URL : <a v-bind:href='shortened_url' target='_blank'>{{ shortened_url }}</a></div>\
     </div>",
@@ -27,7 +27,15 @@ $(document).ready(function () {
     mounted : function () {
       this.$refs.field = $(this.$el).find('.cc-field')[0];
     },
+    computed : {
+      urlValid : function () {
+        return this.isURLValid(this.url);
+      }
+    },
     methods : {
+      isURLValid : function (url) {
+        return (url+"").indexOf("://") > 0;
+      },
       fieldBlurred : function () {
         if (this.url == "") {
           this.url = "http://"

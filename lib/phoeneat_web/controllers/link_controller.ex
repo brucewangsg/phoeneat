@@ -21,7 +21,7 @@ defmodule PhoeneatWeb.LinkController do
   end
 
   def submit(conn, params) do
-    url = params["url"]
+    url = String.replace(params["url"], ~r/#.*$/, "")
     uri = URI.parse(url)
 
     if uri.host && uri.path && uri.scheme do
