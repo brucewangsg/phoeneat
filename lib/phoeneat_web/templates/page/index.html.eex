@@ -17,7 +17,8 @@ $(document).ready(function () {
     data : {
       url : "",
       shortened_url : "",
-      error : ""
+      error : "",
+      lookupURL : ""
     },
     watch : {
       url : function (oldValue, newValue) {
@@ -63,6 +64,8 @@ $(document).ready(function () {
             oThis.$refs.field.selectionEnd = selectionEnd;
           });
         }
+
+        this.quickLookup();
       },
 
       // handle URL submission
@@ -77,6 +80,21 @@ $(document).ready(function () {
             oThis.shortened_url = info.shortcode;
           } else if ("error" in info) {
             oThis.error = info.error;
+          }
+        });
+      },
+
+      // quick lookup in case this URL has been transformed before
+      //
+      quickLookup : function () {
+        var oThis = this;
+        this.lookupURL = this.url;
+        $.post("/api/lookup", { url : this.url }, function (info) {
+          // URL remained the same
+          if (oThis.url+"" == oThis.lookupURL+"") {
+            if ("shortcode" in info) {
+              oThis.shortened_url = info.shortcode;
+            }
           }
         });
       }

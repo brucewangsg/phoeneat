@@ -24,6 +24,7 @@ defmodule PhoeneatWeb.Router do
     pipe_through :api # Use the default browser stack
 
     post "/transform", LinkController, :submit
+    post "/lookup", LinkController, :lookup
   end
 
   # Other scopes may use custom stacks.

@@ -47,6 +47,33 @@ defmodule PhoeneatWeb.LinkController do
         error: "Bad URI"
       }      
     end
+  end
+  
+  def lookup(conn, params) do
+    url = String.replace(params["url"], ~r/#.*$/, "")
+    uri = URI.parse(url)
+
+    if uri.host && uri.path && uri.scheme do
+      query = from link in Link,
+              where: link.domain == ^(uri.host) and link.original_url == ^(String.replace(url, ~r/^https?:\/\//,  "")), 
+              limit: 1
+      records = Repo.all(query)
+
+      if length(records) == 0 do
+        json conn, %{
+          info: "Not Found"
+        }        
+      else
+        record = Enum.at(records, 0)
+        json conn, %{
+          shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
+        }
+      end
+    else
+      json conn, %{
+        info: "Not Found"
+      }        
+    end
 
   end
 end
