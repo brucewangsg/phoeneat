@@ -17,6 +17,13 @@ defmodule PhoeneatWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/:id", LinkController, :redirection
+  end
+
+  scope "/api/", PhoeneatWeb do
+    pipe_through :api # Use the default browser stack
+
+    post "/transform", LinkController, :submit
   end
 
   # Other scopes may use custom stacks.

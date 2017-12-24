@@ -2,7 +2,8 @@ defmodule Phoeneat.Link do
   use Ecto.Schema
   import Ecto.Changeset
   alias Phoeneat.Link
-
+  import Ecto.Query, warn: false
+  alias Phoeneat.Repo
 
   schema "links" do
     field :original_url, :string
@@ -19,4 +20,21 @@ defmodule Phoeneat.Link do
     |> cast(attrs, [:shortcode, :domain, :original_url, :protocol])
     |> validate_required([:shortcode, :domain, :original_url, :protocol])
   end
+
+  def insert_shortcode do
+    query = from link in Link,
+            limit: 1,
+            order_by: [desc: link.id]
+    records = Repo.all(query)
+
+    if length(records) == 0 do
+      Integer.to_string(1679616, 36)
+    end 
+    
+    if length(records) == 1 do
+      record = Enum.at(records, 0)
+      String.to_integer(record.shortcode, 36) + 1 |> Integer.to_string(36)
+    end
+  end
+
 end

@@ -57,8 +57,8 @@ $(document).ready(function () {
       // handle URL submission
       //
       onSubmitted : function () {
-        $.post("/check_url", { url : this.url }, function () {
-          
+        $.post("/api/transform", { url : this.url }, function () {
+
         });
       }
     }
