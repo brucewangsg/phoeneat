@@ -16,7 +16,7 @@ defmodule PhoeneatWeb.LinkController do
       redirect conn, to: "/notfound"
     else
       record = Enum.at(records, 0)
-      redirect conn, external: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
+      redirect conn, external: "#{record.protocol}://#{String.replace(record.original_url, ~r/^https?:\/\//,  "")}"
     end
   end
 
@@ -26,12 +26,12 @@ defmodule PhoeneatWeb.LinkController do
 
     if uri.host && uri.path && uri.scheme do
       query = from link in Link,
-              where: link.domain == ^(uri.host) and link.original_url == ^url, 
+              where: link.domain == ^(uri.host) and link.original_url == ^(String.replace(url, ~r/^https?:\/\//,  "")), 
               limit: 1
       records = Repo.all(query)
 
       if length(records) == 0 do
-        { :ok, record } = %Link{} |> Link.changeset(%{ domain: uri.host, original_url: url, shortcode: Link.insert_shortcode, protocol: uri.scheme }) |> Repo.insert()
+        { :ok, record } = %Link{} |> Link.changeset(%{ domain: uri.host, original_url: String.replace(url, ~r/^https?:\/\//,  ""), shortcode: Link.insert_shortcode, protocol: uri.scheme }) |> Repo.insert()
 
         json conn, %{
           shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
