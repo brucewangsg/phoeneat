@@ -10,7 +10,7 @@ $(document).ready(function () {
       <h2>Shorten your URL</h2>\
       <form action='shorten' v-on:submit.stop.prevent='onSubmitted'>\
         <input v-model='url' class='cc-field' ref='field' v-on:blur='fieldBlurred' v-on:keyup='keyup' v-on:focus='fieldFocused' type='text' style='width : 100%; line-height : 32px; font-size : 28px; margin-bottom : 10px;' placeholder='https://'/>\
-        <input v-if='urlValid' type='submit' value='Shorten URL'/>\
+        <input v-if='urlValid && shouldShowSubmitButton' type='submit' value='Shorten URL'/>\
       </form>\
       <div v-if='shortened_url'>Shortened URL : <a v-bind:href='shortened_url' target='_blank'>{{ shortened_url }}</a></div>\
     </div>",
@@ -18,7 +18,8 @@ $(document).ready(function () {
       url : "",
       shortened_url : "",
       error : "",
-      lookupURL : ""
+      lookupURL : "",
+      submittedURL : ""
     },
     watch : {
       url : function (oldValue, newValue) {
@@ -29,6 +30,9 @@ $(document).ready(function () {
       this.$refs.field = $(this.$el).find('.cc-field')[0];
     },
     computed : {
+      shouldShowSubmitButton : function () {
+        return this.shortened_url == "";
+      },
       urlValid : function () {
         return this.isURLValid(this.url);
       }
@@ -72,14 +76,17 @@ $(document).ready(function () {
       //
       onSubmitted : function () {
         var oThis = this;
+        this.submittedURL = this.url;
         $.post("/api/transform", { url : this.url }, function (info) {
           oThis.error = "";
           oThis.shortened_url = "";
 
-          if ("shortcode" in info) {
-            oThis.shortened_url = oThis.noHTTPSonLocal(info.shortcode);
-          } else if ("error" in info) {
-            oThis.error = info.error;
+          if (oThis.url+"" == oThis.submittedURL+"") {
+            if ("shortcode" in info) {
+              oThis.shortened_url = oThis.noHTTPSonLocal(info.shortcode);
+            } else if ("error" in info) {
+              oThis.error = info.error;
+            }
           }
         });
       },
