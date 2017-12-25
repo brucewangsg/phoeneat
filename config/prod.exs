@@ -61,4 +61,16 @@ config :logger, level: :info
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-import_config "prod.secret.exs"
+# import_config "prod.secret.exs"
+
+
+config :phoeneat, PhoeneatWeb.Endpoint,
+  secret_key_base: "${SECRET_KEY_BASE}"
+
+# Configure your database
+config :phoeneat, Phoeneat.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: "${DATABASE_URL}",
+  database: "phoeneat_prod",
+  ssl: true,
+  pool_size: 1
