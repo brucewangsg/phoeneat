@@ -18,6 +18,7 @@ defmodule PhoeneatWeb.Router do
 
     get "/", PageController, :index
     get "/:id", LinkController, :redirection
+    get "/:id/info", LinkController, :info
   end
 
   scope "/api/", PhoeneatWeb do

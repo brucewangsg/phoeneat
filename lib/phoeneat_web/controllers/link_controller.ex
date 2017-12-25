@@ -5,6 +5,7 @@ defmodule PhoeneatWeb.LinkController do
 
   alias Phoeneat.Repo
   alias Phoeneat.Link
+  alias Phoeneat.Visitor
   require Logger
 
   def redirection(conn, params) do
@@ -18,6 +19,28 @@ defmodule PhoeneatWeb.LinkController do
     else
       record = Enum.at(records, 0)
       redirect conn, external: "#{record.protocol}://#{String.replace(record.original_url, ~r/^https?:\/\//,  "")}"
+
+      %Visitor{} |> Visitor.changeset(%{ ip_address: to_string(:inet_parse.ntoa(conn.remote_ip)), user_agent: Enum.at(get_req_header(conn, "user-agent"), 0), link_id: record.id }) |> Repo.insert()
+    end
+  end
+
+  def info(conn, params) do
+    query = from link in Link,
+            where: link.shortcode == ^(params["id"]), 
+            limit: 1
+    records = Repo.all(query)
+
+    if length(records) == 0 do
+      json conn, %{ info: "No data" }
+    else
+      link = Enum.at(records, 0)
+
+      query = from visitor in Visitor,
+              where: visitor.link_id == ^(link.id), 
+              limit: 100
+      visitors = Repo.all(query)
+
+      json conn, %{ link: link.original_url, stats: Enum.map(visitors, fn visitor -> %{ ip_address: visitor.ip_address, user_agent: visitor.user_agent, visit_time: visitor.inserted_at } end) }
     end
   end
 
