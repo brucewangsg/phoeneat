@@ -65,6 +65,7 @@ config :logger, level: :info
 
 
 config :phoeneat, PhoeneatWeb.Endpoint,
+  server: true,
   secret_key_base: "${SECRET_KEY_BASE}"
 
 # Configure your database
