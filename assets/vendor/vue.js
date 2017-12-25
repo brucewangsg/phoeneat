@@ -10519,7 +10519,5 @@ return Vue$3;
 })));
 
 
-window.Woo=Vue;delete window["Vue"];
-
 /*----debug----*/
 

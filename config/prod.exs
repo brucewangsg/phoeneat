@@ -71,6 +71,6 @@ config :phoeneat, PhoeneatWeb.Endpoint,
 config :phoeneat, Phoeneat.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: "${DATABASE_URL}",
-  database: "phoeneat_prod",
+  database: "",
   ssl: true,
   pool_size: 1
