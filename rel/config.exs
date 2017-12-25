@@ -16,13 +16,13 @@ use Mix.Releases.Config,
 environment :dev do
   set dev_mode: true
   set include_erts: false
-  set cookie: :"*W.c~*x$@%D4YA?C0q%rJXx*FTX467>On^]pI=E!g/2;G)K2.&X61vNlNa%Ofn(%"
+  set cookie: :"ToIJY6Y/}ImdBNY_Sqb>jEp:oFH<T!CVK)qpppL!l^8kOr0mNV0f*G7?y,$Yy5O7"
 end
 
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"Pzswc.qI=)rog(kCeewz=`qtSFpc<QsJhXL?Z2BVm)aP%i$ctr^r]gJY6?Ry(iOK"
+  set cookie: :"N4{c$xV0KlE,X]:E_7=PAg%NU@BQ~phqwLj]0IpVdrww0a}fgefLk|<Xe=]a2BL?"
 end
 
 # You may define one or more releases in this file.
