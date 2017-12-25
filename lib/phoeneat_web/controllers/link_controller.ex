@@ -1,6 +1,7 @@
 defmodule PhoeneatWeb.LinkController do
   use PhoeneatWeb, :controller
   import Ecto.Query, warn: false
+  import HTTPotion
 
   alias Phoeneat.Repo
   alias Phoeneat.Link
@@ -24,6 +25,7 @@ defmodule PhoeneatWeb.LinkController do
     url = String.replace(params["url"], ~r/#.*$/, "")
     uri = URI.parse(url)
 
+    has_responded = false
     if uri.host && uri.path && uri.scheme do
       query = from link in Link,
               where: link.domain == ^(uri.host) and link.original_url == ^(String.replace(url, ~r/^https?:\/\//,  "")), 
@@ -31,24 +33,40 @@ defmodule PhoeneatWeb.LinkController do
       records = Repo.all(query)
 
       if length(records) == 0 do
-        { :ok, record } = %Link{} |> Link.changeset(%{ domain: uri.host, original_url: String.replace(url, ~r/^https?:\/\//,  ""), shortcode: Link.insert_shortcode, protocol: uri.scheme }) |> Repo.insert()
+        response = HTTPotion.get url
+        if response.__struct__ == HTTPotion.Response && (response.status_code == 200 || response.status_code == 302 || response.status_code == 301) do
+          case %Link{} |> Link.changeset(%{ domain: uri.host, original_url: String.replace(url, ~r/^https?:\/\//,  ""), shortcode: Link.insert_shortcode, protocol: uri.scheme }) |> Repo.insert() do
+            { :ok, record } -> 
+              has_responded = true
 
-        json conn, %{
-          shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
-        }        
+              json conn, %{
+                shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
+              }                    
+          end
+        else
+          has_responded = true
+
+          json conn, %{
+            error: "Web page doesn't exist"
+          }                       
+        end
       else
         record = Enum.at(records, 0)
+        has_responded = true
+
         json conn, %{
           shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
         }
       end
-    else
+    end
+
+    if !has_responded do
       json conn, %{
         error: "Bad URI"
       }      
     end
   end
-  
+
   def lookup(conn, params) do
     url = String.replace(params["url"], ~r/#.*$/, "")
     uri = URI.parse(url)

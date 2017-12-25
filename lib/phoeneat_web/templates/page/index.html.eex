@@ -13,6 +13,7 @@ $(document).ready(function () {
         <input v-if='urlValid && shouldShowSubmitButton' type='submit' value='Shorten URL'/>\
       </form>\
       <div v-if='shortened_url'>Shortened URL : <a v-bind:href='shortened_url' target='_blank'>{{ shortened_url }}</a></div>\
+      <div v-if='error'>Error : {{ error }}</div>\
     </div>",
     data : {
       url : "",
