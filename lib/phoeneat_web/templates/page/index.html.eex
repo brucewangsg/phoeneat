@@ -12,7 +12,9 @@ $(document).ready(function () {
         <input v-model='url' class='cc-field' ref='field' v-on:blur='fieldBlurred' v-on:keyup='keyup' v-on:focus='fieldFocused' type='text' style='width : 100%; line-height : 32px; font-size : 28px; margin-bottom : 10px;' placeholder='https://'/>\
         <input v-if='urlValid && shouldShowSubmitButton' type='submit' value='Shorten URL'/>\
       </form>\
-      <div v-if='shortened_url'>Shortened URL : <a v-bind:href='shortened_url' target='_blank'>{{ shortened_url }}</a></div>\
+      <div v-if='shortened_url' style='margin-bottom : 20px;'>Shortened URL : <a v-bind:href='shortened_url' target='_blank'>{{ shortened_url }}</a></div>\
+      <div v-if='shortened_url'>Simple Stats : <a v-bind:href='shortenedInfoURL' target='_blank'>{{ shortenedInfoURL }}</a></div>\
+      <div v-if='shortened_url'><strong>API</strong> : curl 'http://{{currentHost}}/api/transform' --data 'url={{this.url}}'</a></div>\
       <div v-if='error'>Error : {{ error }}</div>\
     </div>",
     data : {
@@ -36,6 +38,12 @@ $(document).ready(function () {
       },
       urlValid : function () {
         return this.isURLValid(this.url);
+      },
+      currentHost : function () {
+        return (window.location+'').split('://')[1].split('/')[0]
+      },
+      shortenedInfoURL : function () {
+        return this.shortened_url + "/info";
       }
     },
     methods : {
