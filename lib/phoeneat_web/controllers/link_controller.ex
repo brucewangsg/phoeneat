@@ -63,7 +63,7 @@ defmodule PhoeneatWeb.LinkController do
               has_responded = true
 
               json conn, %{
-                shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
+                shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:80$/,  "")}/#{record.shortcode}"
               }                    
           end
         else
@@ -78,7 +78,7 @@ defmodule PhoeneatWeb.LinkController do
         has_responded = true
 
         json conn, %{
-          shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
+          shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:80$/,  "")}/#{record.shortcode}"
         }
       end
     end
@@ -107,7 +107,7 @@ defmodule PhoeneatWeb.LinkController do
       else
         record = Enum.at(records, 0)
         json conn, %{
-          shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:$/,  "")}/#{record.shortcode}"
+          shortcode: "https://#{conn.host}#{":#{conn.port}" |> String.replace(~r/^:80$/,  "")}/#{record.shortcode}"
         }
       end
     else
